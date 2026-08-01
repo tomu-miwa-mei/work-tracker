@@ -32,11 +32,11 @@
     padding: 30px 18px; margin-bottom: 16px; text-align: center;
     transition: background .25s ease, border-color .25s ease;
   }
-  .statusNowLabel { font-size: 15px; font-weight: 600; color: rgba(255,255,255,.85); margin-bottom: 10px; }
+  .statusNowLabel { font-size: 15px; font-weight: 600; color: rgba(255,255,255,.9); margin-bottom: 10px; text-shadow: 0 1px 3px rgba(0,0,0,.4); }
   .statusRow { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 8px; }
-  .statusRow svg { width: 26px; height: 26px; }
-  .statusLabel { font-size: 26px; font-weight: 800; color: #fff; }
-  .statusTimer { font-size: 52px; font-weight: 800; letter-spacing: 1px; line-height: 1.1; color: #fff; font-variant-numeric: tabular-nums; }
+  .statusRow svg { width: 26px; height: 26px; filter: drop-shadow(0 1px 2px rgba(0,0,0,.4)); }
+  .statusLabel { font-size: 26px; font-weight: 800; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,.45); }
+  .statusTimer { font-size: 52px; font-weight: 800; letter-spacing: 1px; line-height: 1.1; color: #fff; font-variant-numeric: tabular-nums; text-shadow: 0 2px 6px rgba(0,0,0,.45); }
   .idleWrap { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 6px 0; }
   .idleWrap svg { width: 30px; height: 30px; color: #B8BEC6; }
   .idleText { font-size: 17px; color: #9AA1AA; font-weight: 600; }
@@ -133,14 +133,14 @@
 // 業務の定義
 // ─────────────────────────────────────────────
 const TASKS = [
-  { id: "outlook", label: "Outlook＋マスター更新", icon: "mail",     color: "#3B7DD8" },
-  { id: "kaikake", label: "買掛金・リベート照合",   icon: "file",     color: "#E85B9A" },
-  { id: "hanbai",  label: "販売準備",             icon: "package",  color: "#8B5CD8" },
-  { id: "urikake", label: "売掛金関連",           icon: "receipt",  color: "#2E9E5B" },
-  { id: "claude",  label: "Claude",              icon: "sparkles", color: "#E8863B" },
-  { id: "taiou",   label: "対応（電話・来客）",     icon: "phone",    color: "#A0603A" },
-  { id: "kyukei",  label: "離席・休憩",           icon: "coffee",   color: "#5F6874" },
-  { id: "sonota",  label: "その他",               icon: "settings", color: "#0F9BC4" },
+  { id: "outlook", label: "Outlook＋マスター更新", icon: "mail",     color: "#3B7DD8", gradient: "repeating-linear-gradient(100deg, #3B7DD8 0px, #4A88DE 9px, #3172CE 18px, #4485DC 27px)" },
+  { id: "kaikake", label: "買掛金・リベート照合",   icon: "file",     color: "#E85B9A", gradient: "repeating-linear-gradient(100deg, #E85B9A 0px, #F27AB0 9px, #DE4A8C 18px, #EC66A2 27px)" },
+  { id: "claude",  label: "Claude",              icon: "sparkles", color: "#E8863B", gradient: "repeating-linear-gradient(100deg, #E8863B 0px, #F7A05C 9px, #D9752E 18px, #EC8F48 27px)" },
+  { id: "urikake", label: "売掛金関連",           icon: "receipt",  color: "#2E9E5B", gradient: "repeating-linear-gradient(100deg, #2E9E5B 0px, #4CB878 9px, #1F8047 18px, #3DAF67 27px)" },
+  { id: "hanbai",  label: "販売準備",             icon: "package",  color: "#8B5CD8", gradient: "repeating-linear-gradient(90deg, #8B5CD8 0 18px, #9B6FE0 18px 36px)" },
+  { id: "taiou",   label: "対応（電話・来客）",     icon: "phone",    color: "#A0603A", gradient: "repeating-linear-gradient(90deg, #A0603A 0 18px, #B47048 18px 36px)" },
+  { id: "kyukei",  label: "離席・休憩",           icon: "coffee",   color: "#5F6874", gradient: "repeating-linear-gradient(90deg, #5F6874 0 18px, #737C88 18px 36px)" },
+  { id: "sonota",  label: "その他",               icon: "settings", color: "#1E3A6B", gradient: "repeating-linear-gradient(90deg, #1E3A6B 0 18px, #2E4E85 18px 36px)" },
 ];
 const TASK_MAP = {};
 TASKS.forEach(t => TASK_MAP[t.id] = t);
@@ -344,7 +344,7 @@ function render() {
 
   // 記録中カード
   if (activeTask) {
-    html += '<div class="statusCard" style="border-color:' + activeTask.color + ';background:' + activeTask.color + '">';
+    html += '<div class="statusCard" style="border-color:' + activeTask.color + ';background:' + (activeTask.gradient || activeTask.color) + '">';
     html += '<div class="statusNowLabel">いま記録中</div>';
     html += '<div class="statusRow">' + icon(activeTask.icon, "#fff") + '<span class="statusLabel">' + esc(activeTask.label) + '</span></div>';
     html += '<div class="statusTimer" id="statusTimer">' + fmtDur(state.now - state.active.start) + '</div>';
@@ -425,11 +425,12 @@ function render() {
 }
 
 function taskBtn(t, running, small) {
-  const bg = running ? t.color : "#fff";
+  const bg = running ? (t.gradient || t.color) : "#fff";
   const shadow = running ? "0 4px 14px " + t.color + "55" : "0 1px 3px rgba(0,0,0,.05)";
   const fg = running ? "#fff" : t.color;
+  const tsh = running ? ";text-shadow:0 1px 3px rgba(0,0,0,0.45)" : "";
   return '<button class="taskBtn' + (small ? ' small' : '') + '" style="border-color:' + t.color + ';background:' + bg + ';box-shadow:' + shadow + '" onclick="handleTask(\'' + t.id + '\')">' +
-    icon(t.icon, fg) + '<span class="taskLabel" style="color:' + fg + '">' + esc(t.label) + '</span></button>';
+    icon(t.icon, fg) + '<span class="taskLabel" style="color:' + fg + tsh + '">' + esc(t.label) + '</span></button>';
 }
 
 function logRow(task, start, end, running, memo, id) {
