@@ -123,6 +123,46 @@
   }
   .exportBtn svg { width: 19px; height: 19px; }
   .footNote { text-align: center; font-size: 12px; color: #A8AEB6; margin-top: 14px; line-height: 1.6; }
+  /* ─── やること（ToDo） ─── */
+  .stopZone { cursor:pointer; border-radius:12px; }
+  .stopZone:active { background:rgba(255,255,255,.12); }
+  .todoMini { margin-top:14px; padding:10px 4px 2px; border-top:1px solid rgba(0,0,0,.07); cursor:pointer; }
+  .statusCard[style*="background:#"] .todoMini { border-top-color:rgba(255,255,255,.25); }
+  .todoMiniGrid { display:grid; grid-template-columns:1fr 1fr; grid-auto-flow:column; grid-template-rows:1fr 1fr; gap:4px 12px; }
+  .todoMiniItem { display:flex; align-items:center; gap:6px; font-size:13px; font-weight:600; text-align:left; padding:2px 4px; }
+  .todoMiniDot { width:8px; height:8px; border-radius:50%; background:#B8BEC6; flex-shrink:0; }
+  .todoMiniName { color:#5A6270; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .todoMiniEmpty { font-size:12px; color:#B8BEC6; text-align:left; padding:2px 4px; }
+  .statusCard.running .todoMini { border-top-color:rgba(255,255,255,.3); }
+  .statusCard.running .todoMiniName { color:#fff; }
+  .statusCard.running .todoMiniEmpty { color:rgba(255,255,255,.85); }
+  .statusCard.running .todoMiniDot { background:#fff; }
+  .todoPanel { background:#fff; border-radius:18px; padding:16px; margin-bottom:14px; }
+  .todoPanelHead { font-size:15px; font-weight:800; margin-bottom:12px; }
+  .todoInputRow { display:flex; gap:8px; margin-bottom:10px; }
+  .todoInput { flex:1; padding:12px 14px; font-size:15px; border-radius:12px; border:1.5px solid #E3E5E8; outline:none; }
+  .todoInput:focus { border-color:#9AA1AA; }
+  .todoAddBtn { background:#5F6874; color:#fff; border:none; border-radius:12px; padding:0 20px; font-size:22px; font-weight:700; cursor:pointer; }
+  .suggestRow { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; max-height:180px; overflow-y:auto; }
+  .suggestBtn { font-size:13px; font-weight:600; padding:9px 13px; border-radius:12px; border:1.5px solid #E3E5E8; background:#F7F8FA; color:#5A6270; cursor:pointer; display:flex; align-items:center; gap:5px; }
+  .sdot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .catRow { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; }
+  .catChip { font-size:12px; font-weight:700; padding:7px 12px; border-radius:10px; border:2px solid; background:#fff; cursor:pointer; opacity:.5; }
+  .catChip.on { opacity:1; }
+  .catPicker { display:flex; flex-wrap:wrap; gap:6px; padding:10px 12px 12px; margin:-6px 0 9px; background:#F7F8FA; border-radius:0 0 14px 14px; }
+  .todoRow { margin-bottom:9px; }
+  .todoItem { display:flex; align-items:center; gap:8px; padding:13px 11px; border-radius:14px; background:#F7F8FA; border:2px solid #E8EAED; }
+  .todoRank { width:28px; height:28px; border-radius:50%; background:#B8BEC6; color:#fff; font-size:15px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer; }
+  .todoMainCol { flex:1; text-align:left; }
+  .todoText { font-size:15px; font-weight:700; color:#2A2E35; }
+  .todoTag { display:inline-block; width:9px; height:9px; border-radius:50%; margin-left:6px; vertical-align:middle; }
+  .todoAcc { font-size:11px; font-weight:700; color:#5F6874; margin-left:6px; }
+  .todoStartBtn { background:#fff; color:#5A6270; border:2px solid #B8BEC6; border-radius:10px; padding:7px 12px; font-size:13px; font-weight:800; cursor:pointer; white-space:nowrap; }
+  .todoArrow { background:none; border:none; color:#B8BEC6; cursor:pointer; font-size:20px; line-height:1; padding:2px 4px; }
+  .todoDel { background:none; border:none; color:#C7CCD2; font-size:20px; font-weight:700; cursor:pointer; padding:2px 4px; line-height:1; }
+  .todoEmpty { text-align:center; color:#B8BEC6; font-size:14px; padding:12px 0; }
+  .doneItem { display:flex; align-items:center; padding:11px; border-radius:12px; background:#F7F8FA; margin-bottom:8px; opacity:.8; }
+  .doneTime { font-size:11px; font-weight:700; color:#2E9E5B; margin-left:6px; }
 </style>
 </head>
 <body>
@@ -133,20 +173,31 @@
 // 業務の定義
 // ─────────────────────────────────────────────
 const TASKS = [
-  { id: "outlook", label: "Outlook＋マスター更新", icon: "mail",     color: "#3B7DD8" },
-  { id: "kaikake", label: "買掛金・リベート照合",   icon: "file",     color: "#E85B9A" },
-  { id: "hanbai",  label: "販売準備",             icon: "package",  color: "#8B5CD8" },
-  { id: "urikake", label: "売掛金関連",           icon: "receipt",  color: "#2E9E5B" },
-  { id: "claude",  label: "Claude",              icon: "sparkles", color: "#E8863B" },
-  { id: "taiou",   label: "対応（電話・来客）",     icon: "phone",    color: "#A0603A" },
-  { id: "kyukei",  label: "離席・休憩",           icon: "coffee",   color: "#5F6874" },
-  { id: "sonota",  label: "その他",               icon: "settings", color: "#1E3A6B" },
+  { id: "outlook", label: "Outlook＋マスター更新", short: "Outlook",  icon: "mail",     color: "#3B7DD8" },
+  { id: "kaikake", label: "買掛金・リベート照合",   short: "買掛金",   icon: "file",     color: "#E85B9A" },
+  { id: "hanbai",  label: "販売準備",             short: "販売準備", icon: "package",  color: "#8B5CD8" },
+  { id: "urikake", label: "売掛金関連",           short: "売掛金",   icon: "receipt",  color: "#2E9E5B" },
+  { id: "claude",  label: "Claude",              short: "Claude",  icon: "sparkles", color: "#E8863B" },
+  { id: "taiou",   label: "対応（電話・来客）",     short: "対応",     icon: "phone",    color: "#A0603A" },
+  { id: "kyukei",  label: "離席・休憩",           short: "離席",     icon: "coffee",   color: "#5F6874" },
+  { id: "sonota",  label: "その他",               short: "その他",   icon: "settings", color: "#1E3A6B" },
 ];
 const TASK_MAP = {};
 TASKS.forEach(t => TASK_MAP[t.id] = t);
 // 学習式メモ：業務ごとに、その業務で使ったメモが候補として溜まる（最近使った順）
 let memoHistory = {};  // { taskId: ["三菱","ヤマザキ",...], ... }
 const MEMO_LIMIT = 30; // 業務ごとの候補の最大表示数
+
+// ─── やること（ToDo） ───
+let todos = [];          // [{id, text, cat, acc}]
+let done = [];           // 今日やりきった [{text, cat, time}]
+let doneDate = "";       // やりきったの日付（変わったらリセット）
+let learned = {};        // { "三菱食品の照合": "kaikake" } 学習式の分類
+let todoHistory = [];    // よく使うやること候補（新しい順・最大30）
+let todoSeq = 1;
+const TODO_HIST_MAX = 30;
+let todoPanelOpen = false, pickedCat = null, catPickerId = null;
+let todoRunId = null;    // 実行中のやることID（業務ボタンとは排他）
 
 // ─────────────────────────────────────────────
 // アイコン（SVG・外部依存なし）
@@ -176,18 +227,47 @@ function icon(name, color) {
 // ─────────────────────────────────────────────
 // IndexedDB
 // ─────────────────────────────────────────────
-const DB_NAME = "work-tracker-db", STORE = "sessions";
+const DB_NAME = "work-tracker-db", STORE = "sessions", TODO_STORE = "todos";
 function openDB() {
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, 1);
+    const req = indexedDB.open(DB_NAME, 2);
     req.onupgradeneeded = () => {
       const db = req.result;
       if (!db.objectStoreNames.contains(STORE)) {
         const os = db.createObjectStore(STORE, { keyPath: "id" });
         os.createIndex("dateKey", "dateKey", { unique: false });
       }
+      if (!db.objectStoreNames.contains(TODO_STORE)) {
+        db.createObjectStore(TODO_STORE, { keyPath: "key" });
+      }
     };
     req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+// ToDo関連の保存・読み込み（key固定で1レコードにまとめて保存）
+async function todoSave() {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(TODO_STORE, "readwrite");
+    tx.objectStore(TODO_STORE).put({
+      key: "state",
+      todos: todos,
+      done: done,
+      doneDate: doneDate,
+      learned: learned,
+      history: todoHistory,
+      seq: todoSeq
+    });
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+async function todoLoad() {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const req = db.transaction(TODO_STORE, "readonly").objectStore(TODO_STORE).get("state");
+    req.onsuccess = () => resolve(req.result || null);
     req.onerror = () => reject(req.error);
   });
 }
@@ -263,6 +343,19 @@ async function boot() {
   state.active = all.find(s => s.end == null) || null;
   state.sessions = all.filter(s => s.end != null);
   rebuildMemoHistory(all);
+  // やることの読み込み
+  try {
+    const td = await todoLoad();
+    if (td) {
+      todos = td.todos || [];
+      done = td.done || [];
+      doneDate = td.doneDate || "";
+      learned = td.learned || {};
+      todoHistory = td.history || [];
+      todoSeq = td.seq || 1;
+    }
+  } catch(e) { /* 初回は何もない */ }
+  todoCheckDoneDate();
   startTick();
   render();
 }
@@ -299,6 +392,13 @@ async function handleTask(taskId) {
     const finished = Object.assign({}, state.active, { end: ts });
     await dbPut(finished);
     state.sessions.push(finished);
+    // やることが動いてたら、途中まで記録して残す
+    if (todoRunId !== null) {
+      const t = todos.find(x => x.id === todoRunId);
+      if (t) t.acc += (ts - state.active.start);
+      todoRunId = null;
+      await todoSave();
+    }
     if (state.active.taskId === taskId) { state.active = null; state.memoOpen = false; startTick(); render(); return; }
   }
   const fresh = { id: ts + "-" + Math.random().toString(36).slice(2,8), taskId, start: ts, end: null, dateKey: dateKeyOf(new Date(ts)), memo: "" };
@@ -309,6 +409,148 @@ async function handleTask(taskId) {
   startTick();
   render();
 }
+// ─────────────────────────────────────────────
+// やること（ToDo）
+// ─────────────────────────────────────────────
+function todoTogglePanel(){ todoPanelOpen = !todoPanelOpen; catPickerId = null; render(); }
+function todoOpenInput(){ document.getElementById("todoSuggest").style.display="flex"; document.getElementById("todoCats").style.display="flex"; todoRenderSuggest(); }
+function todoCloseInput(){ const s=document.getElementById("todoSuggest"), c=document.getElementById("todoCats"); if(s)s.style.display="none"; if(c)c.style.display="none"; }
+function todoPickCat(id){
+  const inp = document.getElementById("todoInput");
+  const keep = inp ? inp.value : "";
+  pickedCat = (pickedCat===id?null:id);
+  render();
+  const inp2 = document.getElementById("todoInput");
+  if (inp2) { inp2.value = keep; }
+  todoOpenInput();
+}
+function todoPushHistory(text){
+  todoHistory = todoHistory.filter(t => t !== text);
+  todoHistory.unshift(text);
+  if (todoHistory.length > TODO_HIST_MAX) todoHistory = todoHistory.slice(0, TODO_HIST_MAX);
+}
+async function todoAdd(){
+  const inp = document.getElementById("todoInput");
+  const t = (inp.value || "").trim();
+  if (!t) return;
+  todos.push({ id: todoSeq++, text: t, cat: pickedCat, acc: 0 });
+  if (pickedCat) learned[t] = pickedCat;
+  todoPushHistory(t);
+  inp.value = ""; pickedCat = null;
+  await todoSave();
+  todoCloseInput(); inp.blur(); render();
+}
+async function todoPickSuggest(text){
+  const cat = learned[text] || null;
+  todos.push({ id: todoSeq++, text: text, cat: cat, acc: 0 });
+  todoPushHistory(text);
+  const inp = document.getElementById("todoInput"); if(inp) inp.value = "";
+  pickedCat = null;
+  await todoSave();
+  todoCloseInput(); render();
+}
+async function todoMoveUp(id){
+  const i = todos.findIndex(x => x.id === id);
+  if (i <= 0) return;
+  [todos[i-1], todos[i]] = [todos[i], todos[i-1]];
+  await todoSave(); render();
+}
+async function todoDelete(id){
+  if (todoRunId === id) await todoStopCurrent();
+  todos = todos.filter(x => x.id !== id);
+  await todoSave(); render();
+}
+function todoOpenCatPicker(id){ catPickerId = (catPickerId===id ? null : id); render(); }
+async function todoSetCat(id, catId){
+  const t = todos.find(x => x.id === id); if (!t) return;
+  t.cat = (t.cat === catId ? null : catId);
+  if (t.cat) learned[t.text] = t.cat; else delete learned[t.text];
+  catPickerId = null;
+  await todoSave(); render();
+}
+// やることを開始／終了（同じの押したら完了）
+async function todoPress(id){
+  const ts = Date.now();
+  const t = todos.find(x => x.id === id); if (!t) return;
+  // 同じやることが動いてる → 完了（10秒以内なら記録せず削除）
+  if (todoRunId === id && state.active) {
+    const elapsed = ts - state.active.start;
+    if (elapsed < 10000) {
+      // 10秒以内＝取り消し扱い。記録を消してリストからも削除
+      await dbDelete(state.active.id);
+      todos = todos.filter(x => x.id !== id);
+      state.active = null; todoRunId = null; state.memoOpen = false;
+      await todoSave(); startTick(); render(); return;
+    }
+    const finished = Object.assign({}, state.active, { end: ts });
+    await dbPut(finished);
+    state.sessions.push(finished);
+    const total = t.acc + elapsed;
+    todoCheckDoneDate();
+    done.unshift({ text: t.text, cat: t.cat, time: total });
+    todos = todos.filter(x => x.id !== id);
+    state.active = null; todoRunId = null; state.memoOpen = false;
+    await todoSave(); startTick(); render(); return;
+  }
+  // 別のが動いてたら止める（やることなら途中保存で残す）
+  if (state.active) {
+    const finished = Object.assign({}, state.active, { end: ts });
+    await dbPut(finished);
+    state.sessions.push(finished);
+    if (todoRunId !== null) {
+      const prev = todos.find(x => x.id === todoRunId);
+      if (prev) prev.acc += (ts - state.active.start);
+    }
+  }
+  // 開始：分類があればその業務ID、なければ「その他」で記録。メモにやること名
+  const taskId = t.cat || "sonota";
+  const fresh = { id: ts + "-" + Math.random().toString(36).slice(2,8), taskId, start: ts, end: null, dateKey: dateKeyOf(new Date(ts)), memo: t.text };
+  await dbPut(fresh);
+  state.active = fresh; state.now = ts; todoRunId = id; state.memoOpen = false;
+  pushMemoHistory(taskId, t.text);
+  await todoSave(); startTick(); render();
+}
+// 記録中カードを押して「止める」（完了ではない・リストに残る）
+async function todoStopCurrent(){
+  if (!state.active) return;
+  const ts = Date.now();
+  const finished = Object.assign({}, state.active, { end: ts });
+  await dbPut(finished);
+  state.sessions.push(finished);
+  if (todoRunId !== null) {
+    const t = todos.find(x => x.id === todoRunId);
+    if (t) t.acc += (ts - state.active.start);
+  }
+  state.active = null; todoRunId = null; state.memoOpen = false;
+  await todoSave(); startTick(); render();
+}
+// 日付が変わったら「今日やりきった」をリセット
+function todoCheckDoneDate(){
+  const today = dateKeyOf(new Date());
+  if (doneDate !== today) { done = []; doneDate = today; }
+}
+function todoRenderSuggest(){
+  const row = document.getElementById("todoSuggest"); if (!row) return;
+  const inp = document.getElementById("todoInput");
+  const v = inp ? (inp.value||"").trim() : "";
+  const active = todos.map(t => t.text);
+  let cands = todoHistory.filter(t => !active.includes(t));
+  if (v) cands = cands.filter(t => t.includes(v));
+  cands = cands.slice(0, TODO_HIST_MAX);
+  if (cands.length === 0) { row.innerHTML = ""; return; }
+  row.innerHTML = cands.map(t => {
+    const c = learned[t] ? TASK_MAP[learned[t]] : null;
+    const dot = c ? '<span class="sdot" style="background:'+c.color+'"></span>' : '';
+    return '<button class="suggestBtn" onclick="todoPickSuggest(\''+t.replace(/'/g,"\\'")+'\')">'+dot+esc(t)+'</button>';
+  }).join("");
+}
+function todoOnType(){
+  const inp = document.getElementById("todoInput");
+  const v = (inp.value||"").trim();
+  if (learned[v] && pickedCat === null) { pickedCat = learned[v]; }
+  todoRenderSuggest();
+}
+
 async function handleActiveMemo(memo) {
   if (!state.active) return;
   state.active.memo = memo;
@@ -354,6 +596,82 @@ function handleExport() {
 }
 
 // escape
+// ─── やること：描画 ───
+function todoMiniHtml(running, runColor){
+  let h = '<div class="todoMini" onclick="todoTogglePanel()">';
+  const top = todos.slice(0,4);
+  if (top.length === 0) {
+    h += '<div class="todoMiniEmpty">📋 やること（タップで追加）</div>';
+  } else {
+    h += '<div class="todoMiniGrid">';
+    top.forEach(t => {
+      h += '<div class="todoMiniItem"><span class="todoMiniDot"></span><span class="todoMiniName">' + esc(t.text) + '</span></div>';
+    });
+    h += '</div>';
+  }
+  h += '</div>';
+  return h;
+}
+function todoPanelHtml(){
+  if (!todoPanelOpen) return "";
+  let h = '<div class="todoPanel">';
+  h += '<div class="todoPanelHead">📋 やること</div>';
+  h += '<div class="suggestRow" id="todoSuggest" style="display:none"></div>';
+  h += '<div class="todoInputRow">';
+  h += '<input class="todoInput" id="todoInput" placeholder="やることを追加" onfocus="todoOpenInput()" oninput="todoOnType()" onkeydown="if(event.key===\'Enter\')todoAdd()">';
+  h += '<button class="todoAddBtn" onclick="todoAdd()">＋</button>';
+  h += '</div>';
+  h += '<div class="catRow" id="todoCats" style="display:none">';
+  TASKS.forEach(t => {
+    const on = pickedCat === t.id;
+    h += '<button class="catChip' + (on?' on':'') + '" style="border-color:'+t.color+';color:'+(on?'#fff':t.color)+';'+(on?'background:'+t.color+';':'')+'" onclick="todoPickCat(\''+t.id+'\')">'+esc(t.short || t.label)+'</button>';
+  });
+  h += '</div>';
+  // リスト
+  if (todos.length === 0) {
+    h += '<div class="todoEmpty">やることは空っぽ ✨</div>';
+  } else {
+    todos.forEach((t,i) => {
+      const isRun = (todoRunId === t.id);
+      const c = t.cat ? TASK_MAP[t.cat] : null;
+      const col = c ? c.color : "#1E3A6B";
+      const runStyle = isRun ? ' style="background:'+col+';border-color:'+col+'"' : '';
+      const rankStyle = isRun ? ' style="background:#fff;color:'+col+'"' : '';
+      const txtStyle = isRun ? ' style="color:#fff"' : '';
+      const btnStyle = isRun ? ' style="color:'+col+';border-color:#fff;background:#fff"' : '';
+      const dot = '<span class="todoTag" style="background:'+col+'"></span>';
+      const accTxt = t.acc > 0 ? '<span class="todoAcc"'+txtStyle+'>'+fmtDur(t.acc)+'</span>' : '';
+      h += '<div class="todoRow">';
+      h += '<div class="todoItem"'+runStyle+'>';
+      h += '<span class="todoRank"'+rankStyle+' onclick="todoOpenCatPicker('+t.id+')">'+(i+1)+'</span>';
+      h += '<span class="todoMainCol"><span class="todoText"'+txtStyle+'>'+esc(t.text)+'</span>'+dot+accTxt+'</span>';
+      h += '<button class="todoStartBtn"'+btnStyle+' onclick="todoPress('+t.id+')">'+(isRun?'終了':'開始')+'</button>';
+      h += '<button class="todoArrow"'+(isRun?' style="color:rgba(255,255,255,.85)"':'')+' onclick="todoMoveUp('+t.id+')">▲</button>';
+      h += '</div></div>';
+      if (catPickerId === t.id) {
+        h += '<div class="catPicker">';
+        TASKS.forEach(ct => {
+          const on = t.cat === ct.id;
+          h += '<button class="catChip' + (on?' on':'') + '" style="border-color:'+ct.color+';color:'+(on?'#fff':ct.color)+';'+(on?'background:'+ct.color+';':'')+'" onclick="todoSetCat('+t.id+',\''+ct.id+'\')">'+esc(ct.short || ct.label)+'</button>';
+        });
+        h += '</div>';
+      }
+    });
+  }
+  h += '</div>';
+  // 今日やりきった
+  todoCheckDoneDate();
+  if (done.length > 0) {
+    h += '<div class="todoPanel"><div class="todoPanelHead">✅ 今日やりきった</div>';
+    done.forEach(x => {
+      const c = x.cat ? TASK_MAP[x.cat] : null;
+      const col = c ? c.color : "#1E3A6B";
+      h += '<div class="doneItem"><span class="todoMainCol"><span class="todoText" style="color:#5A6270;font-weight:600">'+esc(x.text)+'</span><span class="todoTag" style="background:'+col+'"></span><span class="doneTime">'+fmtDur(x.time)+'</span></span></div>';
+    });
+    h += '</div>';
+  }
+  return h;
+}
 function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
 // タイマーだけ軽く更新（毎秒フル再描画を避ける）
@@ -389,10 +707,12 @@ function render() {
 
   // 記録中カード
   if (activeTask) {
-    html += '<div class="statusCard" style="border-color:' + activeTask.color + ';background:' + (activeTask.gradient || activeTask.color) + '">';
+    html += '<div class="statusCard running" style="border-color:' + activeTask.color + ';background:' + (activeTask.gradient || activeTask.color) + '">';
+    html += '<div class="stopZone" onclick="todoStopCurrent()">';
     html += '<div class="statusNowLabel">いま記録中</div>';
     html += '<div class="statusRow">' + icon(activeTask.icon, "#fff") + '<span class="statusLabel">' + esc(activeTask.label) + '</span></div>';
     html += '<div class="statusTimer" id="statusTimer">' + fmtDur(state.now - state.active.start) + '</div>';
+    html += '</div>';
     if (!state.memoOpen) {
       const label = state.active.memo ? ("📝 " + esc(state.active.memo)) : "＋ メモを追加";
       html += '<button class="activeMemoToggle" onclick="openMemo()">' + label + '</button>';
@@ -414,10 +734,16 @@ function render() {
       html += '<button class="memoDone" style="color:' + activeTask.color + '" onclick="closeMemo()">保存して閉じる</button>';
       html += '</div></div>';
     }
+    html += todoMiniHtml(true, activeTask.color);
     html += '</div>';
   } else {
-    html += '<div class="statusCard"><div class="idleWrap">' + icon("play") + '<span class="idleText">ボタンを押して開始</span></div></div>';
+    html += '<div class="statusCard"><div class="idleWrap">' + icon("play") + '<span class="idleText">ボタンを押して開始</span></div>';
+    html += todoMiniHtml(false, null);
+    html += '</div>';
   }
+
+  // やることパネル
+  html += todoPanelHtml();
 
   // 業務ボタン（上6）
   html += '<div class="grid">';
